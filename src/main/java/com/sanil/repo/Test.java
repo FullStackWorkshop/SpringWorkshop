@@ -1,4 +1,4 @@
-package com.sanil;
+package com.sanil.repo;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
