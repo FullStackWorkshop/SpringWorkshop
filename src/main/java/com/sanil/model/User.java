@@ -1,9 +1,20 @@
 package com.sanil.model;
 
+import javax.persistence.*;
+
+@NamedQuery(name="find_all",query="select u from User u")
+@Entity
+@Table(name = "user")
 public class User {
 
+    @Id
+    @GeneratedValue
     Integer id;
-    private String name, phoneNumber, email;
+
+    private String name, email;
+
+    @Column(name="phone_number")
+    private String phoneNumber;
 
     public User() {
     }

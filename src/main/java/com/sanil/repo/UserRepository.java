@@ -1,64 +1,41 @@
 package com.sanil.repo;
 
 import com.sanil.model.User;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.jdbc.core.JdbcTemplate;
-import org.springframework.jdbc.core.RowMapper;
 import org.springframework.stereotype.Repository;
 
-import java.sql.ResultSet;
-import java.sql.SQLException;
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
+import javax.persistence.TypedQuery;
+import javax.transaction.Transactional;
 import java.util.List;
 
 @Repository
+@Transactional
 public class UserRepository {
 
-    @Autowired
-    JdbcTemplate jdbcTemplate;
+    @PersistenceContext
+    EntityManager entityManager;
 
-    public String save(User user) {
-
-        int rowAffected = jdbcTemplate.update("insert into user values(?, ?, ?, ?);", user.getId(),
-                user.getName(), user.getPhoneNumber(), user.getEmail());
-        return "Saved (row " + rowAffected + " affected";
-
+    public User save(User user) {
+        return entityManager.merge(user);
     }
 
-    public List<User> findById(int id) {
-
-/*        List<User> users = jdbcTemplate.query("select * from user where id=?",
-                new Object[]{id}, new BeanPropertyRowMapper<User>(User.class));
-        return users;*/
-                List<User> users = jdbcTemplate.query("select * from user where id=?",
-                new Object[]{id}, new UserRowMapper());
-        return users;
+    public User findById(int id) {
+        return entityManager.find(User.class, id);
     }
 
     public List<User> findAll() {
-        List<User> users = jdbcTemplate.query("select * from user",
-                new UserRowMapper());
-        return users;
+        TypedQuery<User> findAllQuery = (TypedQuery<User>) entityManager.createNamedQuery("find_all");
+        return findAllQuery.getResultList();
     }
 
     public User update(User user) {
-
-        //needs to be implemented as save method. use jdbc update method to update.
-        return null;
+        return entityManager.merge(user);
     }
 
-    public void delete(Integer id) {
-        jdbcTemplate.update("delete from user where id=?", id);
-    }
-
-    class UserRowMapper implements RowMapper<User> {
-
-        @Override
-        public User mapRow(ResultSet resultSet, int i) throws SQLException {
-            User user = new User(resultSet.getInt("id"),
-                    resultSet.getString("name"),
-                    resultSet.getString("phone_number"),
-                    resultSet.getString("email"));
-            return user;
+    public void delete(User user) {
+        if (entityManager.contains(user)) {
+            entityManager.remove(user);
         }
     }
 }

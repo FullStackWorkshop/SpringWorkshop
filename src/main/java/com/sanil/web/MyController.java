@@ -1,4 +1,4 @@
-package com.sanil.repo.web;
+package com.sanil.web;
 
 import com.sanil.model.User;
 import com.sanil.repo.UserRepository;
@@ -14,7 +14,7 @@ public class MyController {
     UserRepository userRepo;
 
     @PostMapping("/save-user")
-    public String save(@RequestBody User user) {
+    public User save(@RequestBody User user) {
         return userRepo.save(user);
     }
 
@@ -29,13 +29,13 @@ public class MyController {
     }
 
     @GetMapping("/get-user/{id}")
-    public List<User> getUserById(@PathVariable Integer id) {
+    public User getUserById(@PathVariable Integer id) {
         return userRepo.findById(id);
     }
 
-    @DeleteMapping("delete-user/{id}")
-    public String deleteUser(@PathVariable Integer id) {
-        userRepo.delete(id);
-        return "deleted user with id "+id;
+    @DeleteMapping("delete-user")
+    public String deleteUser(@RequestBody User user) {
+        userRepo.delete(user);
+        return "deleted user with id "+user.getId();
     }
 }
