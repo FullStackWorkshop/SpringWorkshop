@@ -20,7 +20,7 @@ public class MyController {
 
     @PutMapping("/update-user")
     public User update(@RequestBody User user) {
-        return userRepo.update(user);
+        return userRepo.save(user);
     }
 
     @GetMapping("/get-users")
@@ -30,7 +30,7 @@ public class MyController {
 
     @GetMapping("/get-user/{id}")
     public User getUserById(@PathVariable Integer id) {
-        return userRepo.findById(id);
+        return userRepo.findById(id).orElse(null);
     }
 
     @DeleteMapping("delete-user")
